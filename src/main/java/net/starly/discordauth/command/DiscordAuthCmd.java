@@ -3,8 +3,6 @@ package net.starly.discordauth.command;
 import net.starly.discordauth.DiscordAuthMain;
 import net.starly.discordauth.data.AuthCodeMapData;
 import net.starly.discordauth.data.PlayerAuthData;
-import net.starly.discordauth.event.PlayerAsyncChatListener;
-import net.starly.discordauth.event.PlayerCommandPreprocessListener;
 import net.starly.discordauth.event.PlayerJoinListener;
 import net.starly.discordauth.event.PlayerMoveListener;
 import org.bukkit.Bukkit;

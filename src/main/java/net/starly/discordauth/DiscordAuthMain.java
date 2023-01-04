@@ -5,8 +5,6 @@ import net.starly.core.data.MessageConfig;
 import net.starly.discordauth.bot.Bot;
 import net.starly.discordauth.command.DiscordAuthCmd;
 import net.starly.discordauth.data.PlayerAuthData;
-import net.starly.discordauth.event.PlayerAsyncChatListener;
-import net.starly.discordauth.event.PlayerCommandPreprocessListener;
 import net.starly.discordauth.event.PlayerJoinListener;
 import net.starly.discordauth.event.PlayerMoveListener;
 import net.starly.discordauth.expansion.DiscordAuthExpansion;
