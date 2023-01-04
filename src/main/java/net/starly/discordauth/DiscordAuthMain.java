@@ -1,5 +1,6 @@
 package net.starly.discordauth;
 
+import net.starly.core.bstats.Metrics;
 import net.starly.core.data.Config;
 import net.starly.core.data.MessageConfig;
 import net.starly.discordauth.bot.Bot;
@@ -32,6 +33,8 @@ public class DiscordAuthMain extends JavaPlugin {
         }
 
         plugin = this;
+
+        new Metrics(this, 17295);
 
 
         //Commands
