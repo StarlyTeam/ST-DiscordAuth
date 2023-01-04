@@ -1,0 +1,17 @@
+name: ST-DiscordAuth
+main: net.starly.discordauth.DiscordAuthMain
+author: Starly Team
+website: https://discord.gg/TF8jqSJjCG
+
+description: DiscordAuth Plugin.
+
+api-version: 1.19
+version: 1.2
+
+softdepend:
+  - ST-Core
+  - PlaceholderAPI
+
+commands:
+  discordauth:
+      aliases: [da, 디코연동, 연동, 인증]

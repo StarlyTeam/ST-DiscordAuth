@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+group 'net.starly.solla.017'
+version '1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        url = "http://feather-s.kr:8083/repository/maven-public/"
+        allowInsecureProtocol = true
+    }
+    maven {
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+}
+
+dependencies {
+    //JAVA DEPENDENCIES
+    compileOnly "org.jetbrains:annotations:23.0.0"
+
+    //BUKKIT DEPENDENCIES
+    compileOnly "org.spigotmc:spigot-api:R0.1:1.19.2"
+
+    // OTHER DEPENDENCIES
+    compileOnly "net.starly.core:ST-Core:1.4.2"
+    compileOnly "me.clip:placeholderapi:2.11.2"
+    api "net.dv8tion:JDA:5.0.0-alpha.22"
+}
+
+jar {
+    finalizedBy shadowJar
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

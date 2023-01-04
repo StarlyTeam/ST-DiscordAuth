@@ -1,0 +1,136 @@
+bot_settings:
+
+  # 봇 활성화 설정
+  enable: true
+
+  # 봇 토큰
+  token: "YOUR_TOKEN"
+
+  # 봇 상태 [online, dnd, idle]
+  status: "dnd"
+
+  # 봇 활동
+  richPresence:
+
+    # 활동 이름
+    name: "ST-DiscordAuth"
+
+    # 활동 타입 [playing, watching, listening]
+    type: "playing"
+
+  # 역할 ID 지정
+  roles:
+
+    # 인증됨
+    verifiedRole: "YOUR_ROLE_ID"
+
+    # 관리자
+    moderatorRole: "YOUR_ROLE_ID"
+
+  # 봇이 작동할 길드 ID 지정
+  guildId: "YOUR_GUILD_ID"
+
+  # 인증 시 서버 닉네임 변경
+  changeDiscordName:
+
+    # 활성화
+    enable: true
+
+    # +-------------- 마크 닉네임 ------ 디코 닉네임 ------- 디코 태그 ---- 디코 닉네임 + 태그 ----------+ #
+    # 변경할 이름 [  %minecraft_name%,  %discord_name%,  %discord_tag%,  %discord_full%  ]
+    name: "[ %minecraft_name% ]"
+
+# +----------------------------------------------------------------------------------------------+ #
+
+# 봇 메세지
+bot_messages:
+
+  # 임베드 색깔
+  embedColor: "#6ec279"
+
+  # 버튼 임베드
+  buttonEmbed:
+    title: "디스코드 인증후, 서버를 즐기실 수 있습니다. | ST-DiscordAuth"
+    description: "아래 버튼을 눌러 인증을 진행해주세요."
+    thumbnailURL: "https://media.discordapp.net/attachments/1038091650674724954/1038356684323704872/a2840417cda1b957.gif"
+
+    # 1번째 버튼
+    btn1:
+      # 버튼 이름
+      label: "인증번호 입력하기"
+
+    # 2번째 버튼
+    btn2:
+      # 버튼 이름
+      label: "어떻게 연동하나요?"
+
+    # 3번째 버튼
+    btn3:
+      # 버튼 이름
+      label: "문의하기"
+
+  # 서버내 명령어 사용 시도
+  onlyGuild:
+    title: "생성에 실패했습니다!"
+    description: "해당 명령어는 길드에서만 사용 가능합니다!"
+    thumbnailURL: "https://media.discordapp.net/attachments/1038091650674724954/1038356684323704872/a2840417cda1b957.gif"
+
+  # 인증코드 자릿수 오류
+  only6Characters:
+    title: "인증에 실패했습니다!"
+    description: "인증코드는 6자리여야 합니다."
+    thumbnailURL: "https://media.discordapp.net/attachments/1038091650674724954/1038356684323704872/a2840417cda1b957.gif"
+
+  # 인증코드 존재 안함
+  notAvailableCode:
+    title: "인증에 실패했습니다!"
+    description: "인증코드가 존재하지 않습니다."
+    thumbnailURL: "https://media.discordapp.net/attachments/1038091650674724954/1038356684323704872/a2840417cda1b957.gif"
+
+  # 인증 성공
+  successVerify:
+    title: "인증에 성공했습니다!"
+    description: "인증에 성공하였습니다."
+    thumbnailURL: "https://media.discordapp.net/attachments/1038091650674724954/1038356684323704872/a2840417cda1b957.gif"
+
+  # 길드가 없음
+  notAvailableGuildId:
+    title: "역할지급에 실패했습니다!"
+    description: "역할을 지급받을 길드 ID가 올바르지 않습니다. 자세한 사항은 관리자에게 문의해주세요."
+    thumbnailURL: "https://media.discordapp.net/attachments/1038091650674724954/1038356684323704872/a2840417cda1b957.gif"
+
+  # 유저가 길드에 없음
+  notGuildMember:
+    title: "역할지급에 실패했습니다!"
+    description: "역할을 지급받을 길드에 당신이 있지 않습니다!"
+    thumbnailURL: "https://media.discordapp.net/attachments/1038091650674724954/1038356684323704872/a2840417cda1b957.gif"
+
+  # 역할이 없음
+  notAvailableRoleId:
+    title: "역할지급에 실패했습니다!"
+    description: "지급 받을 역할의 ID가 올바르지 않습니다. 자세한 사항은 관리자에게 문의해주세요."
+    thumbnailURL: "https://media.discordapp.net/attachments/1038091650674724954/1038356684323704872/a2840417cda1b957.gif"
+
+  # 역할지급 성공
+  successGiveRole:
+    title: "역할지급에 성공했습니다!"
+    description: "역할을 지급했습니다!"
+    thumbnailURL: "https://media.discordapp.net/attachments/1038091650674724954/1038356684323704872/a2840417cda1b957.gif"
+
+  # 닉네임 변경 실패
+  failedModifyNick:
+    title: "닉네임 변경에 실패했습니다!"
+    description: "관리자의 닉네임은 변경할 수 없습니다!"
+    thumbnailURL: "https://media.discordapp.net/attachments/1038091650674724954/1038356684323704872/a2840417cda1b957.gif"
+
+  # btn2 클릭시
+  btn2:
+    title: "어떻게 인증하나요?"
+    description: "어떻게 인증하나요?"
+    thumbnailURL: "https://media.discordapp.net/attachments/1038091650674724954/1038356684323704872/a2840417cda1b957.gif"
+
+  # btn3 클릭시
+  btn3:
+    title: "문의하기"
+    description: "문의하기"
+    thumbnailURL: "https://media.discordapp.net/attachments/1038091650674724954/1038356684323704872/a2840417cda1b957.gif"
