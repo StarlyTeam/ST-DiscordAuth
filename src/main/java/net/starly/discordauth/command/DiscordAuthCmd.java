@@ -105,7 +105,7 @@ public class DiscordAuthCmd implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        if (args.length == 1) return List.of("리로드", "발급");
+        if (args.length == 1) return sender.isOp() ? List.of("리로드", "발급") : List.of("발급");
 
         return Collections.emptyList();
     }
