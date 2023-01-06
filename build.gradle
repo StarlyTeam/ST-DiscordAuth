@@ -13,9 +13,6 @@ repositories {
         url = "http://feather-s.kr:8083/repository/maven-public/"
         allowInsecureProtocol = true
     }
-    maven {
-        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
-    }
 }
 
 dependencies {
@@ -27,7 +24,7 @@ dependencies {
 
     // OTHER DEPENDENCIES
     compileOnly "net.starly.core:ST-Core:1.4.2"
-    compileOnly "me.clip:placeholderapi:2.11.2"
+    compileOnly "me.clip:Placeholder-API:2.11.2"
     api "net.dv8tion:JDA:5.0.0-alpha.22"
 }
 
