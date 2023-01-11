@@ -76,9 +76,9 @@ public class DiscordAuthMain extends JavaPlugin {
 
                         player.sendTitle(ChatColor.translateAlternateColorCodes('&', config.getString("messages.not_verified_title.title")),
                                 ChatColor.translateAlternateColorCodes('&', config.getString("messages.not_verified_title.subtitle")),
-                                config.getInt("messages.not_verified_title.fade_in") * 20,
+                                config.getInt("messages.not_verified_title.fadein") * 20,
                                 config.getInt("messages.not_verified_title.stay") * 20,
-                                config.getInt("messages.not_verified_title.fade_out") * 20);
+                                config.getInt("messages.not_verified_title.fadeout") * 20);
                     }
                 }
             }.runTaskTimerAsynchronously(this, 0, config.getLong("messages.not_verified_title.interval") * 20L);

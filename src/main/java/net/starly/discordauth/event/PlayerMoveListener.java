@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 public class PlayerMoveListener implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        if (!DiscordAuthMain.config.getBoolean("others_settings.enable_cancellation_move")) return;
+        if (!DiscordAuthMain.config.getBoolean("other_settings.enable_cancellation_move")) return;
 
         Location from = event.getFrom();
         Location to = event.getTo();
