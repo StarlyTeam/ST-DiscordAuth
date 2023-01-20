@@ -6,7 +6,7 @@ website: https://discord.gg/TF8jqSJjCG
 description: DiscordAuth Plugin.
 
 api-version: 1.16
-version: 1.2.2
+version: 1.2.3
 
 softdepend:
   - ST-Core

@@ -96,7 +96,7 @@ public class DiscordAuthCmd implements CommandExecutor, TabCompleter {
                 return true;
             }
         } else {
-            player.sendMessage(messageConfig.getMessage("messages.wrong_command"));
+            player.sendMessage(messageConfig.getMessage("others.wrong_command"));
             return true;
         }
 
