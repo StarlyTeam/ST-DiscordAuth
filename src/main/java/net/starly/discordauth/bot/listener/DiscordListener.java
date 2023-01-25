@@ -44,7 +44,8 @@ public class DiscordListener implements EventListener {
                     Integer.parseInt(botConfig.getString("bot_messages.embedColor").substring(3, 5), 16),
                     Integer.parseInt(botConfig.getString("bot_messages.embedColor").substring(5, 7), 16)
             );
-        } else if (event instanceof SlashCommandInteractionEvent e) {
+        } else if (event instanceof SlashCommandInteractionEvent) {
+            SlashCommandInteractionEvent e = (SlashCommandInteractionEvent) event;
             if (e.getName().equalsIgnoreCase("연동생성")) {
                 if (!e.isFromGuild()) {
                     e.replyEmbeds(getEmbed("onlyGuild")).setEphemeral(true).queue();
@@ -66,7 +67,8 @@ public class DiscordListener implements EventListener {
                 e.reply("인증 임베드를 생성하였습니다!").setEphemeral(true).queue();
                 e.getChannel().sendMessage(message).queue();
             }
-        } else if (event instanceof ButtonInteractionEvent e) {
+        } else if (event instanceof ButtonInteractionEvent) {
+            ButtonInteractionEvent e = (ButtonInteractionEvent) event;
             if (e.getButton().getId().equals("btn1__discordauth")) {
                 TextInput verifyCodeInput = TextInput.create("verifyCode__discordauth", "인증코드", TextInputStyle.SHORT)
                         .setPlaceholder("서버에서 발급받은 코드를 입력해주세요.")
@@ -84,7 +86,8 @@ public class DiscordListener implements EventListener {
             } else if (e.getButton().getId().equals("btn3__discordauth")) {
                 e.replyEmbeds(getEmbed("btn3")).setEphemeral(true).queue();
             }
-        } else if (event instanceof ModalInteractionEvent e) {
+        } else if (event instanceof ModalInteractionEvent) {
+            ModalInteractionEvent e = (ModalInteractionEvent) event;
             if (e.getModalId().equals("verifyCode__discordauth")) {
                 //입력받은 코드
                 String currentCode = e.getValue("verifyCode__discordauth").getAsString();
@@ -109,7 +112,7 @@ public class DiscordListener implements EventListener {
                     if (player == null) return;
 
                     if (player.isOnline()) {
-                        player.getPlayer().sendMessage(config.getMessage("messages.connected", Map.of("{tag}", e.getUser().getAsTag())));
+                        player.getPlayer().sendMessage(config.getMessage("messages.connected").replace("{tag}", e.getUser().getAsTag()));
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -204,9 +207,9 @@ public class DiscordListener implements EventListener {
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                     if (!onlinePlayer.isOp()) return;
 
-                    onlinePlayer.sendMessage(DiscordAuthMain.config.getMessage("messages.connected_op", Map.of(
-                            "{player}", player.getDisplayName(),
-                            "{tag}", e.getUser().getAsTag())));
+                    onlinePlayer.sendMessage(DiscordAuthMain.config.getMessage("messages.connected_op")
+                            .replace("{player}", player.getDisplayName())
+                            .replace("{tag}", e.getUser().getAsTag()));
                 }
             }
         }

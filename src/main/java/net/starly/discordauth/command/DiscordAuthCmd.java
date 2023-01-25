@@ -14,28 +14,32 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static net.starly.discordauth.DiscordAuthMain.messageConfig;
 
 public class DiscordAuthCmd implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
+        Player player = (Player) sender;
+        if (!(sender instanceof Player)) {
             sender.sendMessage(messageConfig.getMessage("others.cannot_execute_in_console"));
             return true;
         }
 
         PlayerAuthData data = new PlayerAuthData(player);
         if (args.length == 0) {
-            if (!data.isAuthenticated()) messageConfig.getMessages("messages.not_authenticated", Map.of("{player}", player.getDisplayName())).forEach(player::sendMessage);
-            else messageConfig.getMessages("messages.authenticated", Map.of("{player}", player.getDisplayName())).forEach(player::sendMessage);
+            if (!data.isAuthenticated())
+                player.sendMessage(messageConfig.getMessage("messages.not_authenticated").replace("{player}", player.getDisplayName()));
+//                messageConfig.getMessages("messages.not_authenticated", Map.of("{player}", player.getDisplayName())).forEach(player::sendMessage);
+            else player.sendMessage(messageConfig.getMessage("messages.authenticated").replace("{player}", player.getDisplayName()));
+//                messageConfig.getMessages("messages.authenticated", Map.of("{player}", player.getDisplayName())).forEach(player::sendMessage);
 
             return true;
         } else if (args.length == 1) {
-            if (List.of("리로드", "reload").contains(args[0].toLowerCase())) {
+            if (Arrays.asList("리로드", "reload").contains(args[0].toLowerCase())) {
                 if (!player.isOp()) {
                     player.sendMessage(messageConfig.getMessage("others.op_command"));
                     return true;
@@ -60,7 +64,7 @@ public class DiscordAuthCmd implements CommandExecutor, TabCompleter {
 
                 player.sendMessage(messageConfig.getMessage("others.reloaded_config"));
                 return true;
-            } else if (List.of("발급", "코드", "generate", "code").contains(args[0].toLowerCase())) {
+            } else if (Arrays.asList("발급", "코드", "generate", "code").contains(args[0].toLowerCase())) {
                 if (data.isAuthenticated()) {
                     player.sendMessage(messageConfig.getMessage("messages.already_authenticated"));
                     return true;
@@ -91,8 +95,10 @@ public class DiscordAuthCmd implements CommandExecutor, TabCompleter {
                     }
                 }.runTaskLaterAsynchronously(DiscordAuthMain.getPlugin(), sec * 20L);
 
-
-                messageConfig.getMessages("messages.verify_code_generated", Map.of("{code}", code, "{remain_time}", String.valueOf(sec))).forEach(player::sendMessage);
+                player.sendMessage(messageConfig.getMessage("messages.verify_code_generated")
+                        .replace("{code}", code)
+                        .replace("{remain_time}", String.valueOf(sec)));
+//                messageConfig.getMessages("messages.verify_code_generated", Map.of("{code}", code, "{remain_time}", String.valueOf(sec))).forEach(player::sendMessage);
                 return true;
             }
         } else {
@@ -105,7 +111,7 @@ public class DiscordAuthCmd implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        if (args.length == 1) return sender.isOp() ? List.of("리로드", "발급") : List.of("발급");
+        if (args.length == 1) return sender.isOp() ? Arrays.asList("리로드", "발급") : Arrays.asList("발급");
 
         return Collections.emptyList();
     }
