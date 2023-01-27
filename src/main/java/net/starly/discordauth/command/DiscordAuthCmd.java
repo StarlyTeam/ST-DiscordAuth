@@ -13,8 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
 
 import static net.starly.discordauth.DiscordAuthMain.messageConfig;
 
@@ -33,12 +32,14 @@ public class DiscordAuthCmd implements CommandExecutor {
                 return true;
             }
 
-            if (!data.isAuthenticated()) messageConfig.getMessages("messages.not_authenticated", Map.of("{player}", player.getDisplayName())).forEach(player::sendMessage);
-            else messageConfig.getMessages("messages.authenticated", Map.of("{player}", player.getDisplayName())).forEach(player::sendMessage);
+            if (!data.isAuthenticated()) messageConfig.getMessages("messages.not_authenticated").forEach(line -> player.sendMessage(line
+                    .replace("{player}", player.getDisplayName())));
+            else messageConfig.getMessages("messages.authenticated").forEach(line -> player.sendMessage(line
+                    .replace("{player}", player.getDisplayName())));
 
             return true;
         } else if (args.length == 1) {
-            if (List.of("리로드", "reload").contains(args[0].toLowerCase())) {
+            if (Arrays.asList("리로드", "reload").contains(args[0].toLowerCase())) {
                 if (!player.hasPermission("starly.discordauth.reload")) {
                     player.sendMessage(messageConfig.getMessage("others.no_permission"));
                     return true;
@@ -63,7 +64,7 @@ public class DiscordAuthCmd implements CommandExecutor {
 
                 player.sendMessage(messageConfig.getMessage("others.reloaded_config"));
                 return true;
-            } else if (List.of("발급", "코드", "generate", "code").contains(args[0].toLowerCase())) {
+            } else if (Arrays.asList("발급", "코드", "generate", "code").contains(args[0].toLowerCase())) {
                 if (!player.hasPermission("starly.discordauth.gencode")) {
                     player.sendMessage(messageConfig.getMessage("others.no_permission"));
                     return true;
@@ -100,9 +101,12 @@ public class DiscordAuthCmd implements CommandExecutor {
                 }.runTaskLaterAsynchronously(DiscordAuthMain.getPlugin(), sec * 20L);
 
 
-                messageConfig.getMessages("messages.verify_code_generated", Map.of("{code}", code, "{remain_time}", String.valueOf(sec))).forEach(player::sendMessage);
+                String finalCode1 = code;
+                messageConfig.getMessages("messages.verify_code_generated").forEach(line -> player.sendMessage(line
+                        .replace("{code}", finalCode1)
+                        .replace("{remain_time}", String.valueOf(sec))));
                 return true;
-            } else if (List.of("해제", "unauth").contains(args[0].toLowerCase())) {
+            } else if (Arrays.asList("해제", "unauth").contains(args[0].toLowerCase())) {
                 if (args.length == 1) {
                     if (!player.hasPermission("starly.discordauth.unauth.self")) {
                         player.sendMessage(messageConfig.getMessage("others.no_permission"));
