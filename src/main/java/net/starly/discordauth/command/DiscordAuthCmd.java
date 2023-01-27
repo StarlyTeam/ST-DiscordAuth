@@ -20,10 +20,11 @@ import static net.starly.discordauth.DiscordAuthMain.messageConfig;
 public class DiscordAuthCmd implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
+        if (!(sender instanceof Player)) {
             sender.sendMessage(messageConfig.getMessage("others.cannot_execute_in_console"));
             return true;
         }
+        Player player = (Player) sender;
 
         PlayerAuthData data = new PlayerAuthData(player);
         if (args.length == 0) {
