@@ -9,18 +9,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static net.starly.discordauth.DiscordAuthMain.messageConfig;
 
-public class DiscordAuthCmd implements CommandExecutor, TabCompleter {
+public class DiscordAuthCmd implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player player)) {
@@ -30,14 +28,19 @@ public class DiscordAuthCmd implements CommandExecutor, TabCompleter {
 
         PlayerAuthData data = new PlayerAuthData(player);
         if (args.length == 0) {
+            if (!player.hasPermission("starly.discordauth.status")) {
+                player.sendMessage(messageConfig.getMessage("others.no_permission"));
+                return true;
+            }
+
             if (!data.isAuthenticated()) messageConfig.getMessages("messages.not_authenticated", Map.of("{player}", player.getDisplayName())).forEach(player::sendMessage);
             else messageConfig.getMessages("messages.authenticated", Map.of("{player}", player.getDisplayName())).forEach(player::sendMessage);
 
             return true;
         } else if (args.length == 1) {
             if (List.of("리로드", "reload").contains(args[0].toLowerCase())) {
-                if (!player.isOp()) {
-                    player.sendMessage(messageConfig.getMessage("others.op_command"));
+                if (!player.hasPermission("starly.discordauth.reload")) {
+                    player.sendMessage(messageConfig.getMessage("others.no_permission"));
                     return true;
                 }
 
@@ -61,6 +64,11 @@ public class DiscordAuthCmd implements CommandExecutor, TabCompleter {
                 player.sendMessage(messageConfig.getMessage("others.reloaded_config"));
                 return true;
             } else if (List.of("발급", "코드", "generate", "code").contains(args[0].toLowerCase())) {
+                if (!player.hasPermission("starly.discordauth.gencode")) {
+                    player.sendMessage(messageConfig.getMessage("others.no_permission"));
+                    return true;
+                }
+
                 if (data.isAuthenticated()) {
                     player.sendMessage(messageConfig.getMessage("messages.already_authenticated"));
                     return true;
@@ -94,19 +102,40 @@ public class DiscordAuthCmd implements CommandExecutor, TabCompleter {
 
                 messageConfig.getMessages("messages.verify_code_generated", Map.of("{code}", code, "{remain_time}", String.valueOf(sec))).forEach(player::sendMessage);
                 return true;
+            } else if (List.of("해제", "unauth").contains(args[0].toLowerCase())) {
+                if (args.length == 1) {
+                    if (!player.hasPermission("starly.discordauth.unauth.self")) {
+                        player.sendMessage(messageConfig.getMessage("others.no_permission"));
+                        return true;
+                    }
+
+                    data.setAuthenticated(false);
+                    data.setDiscordId("");
+                    player.sendMessage(messageConfig.getMessage("messages.unauthorized"));
+                    return true;
+                } else if (args.length == 2) {
+                    if (!player.hasPermission("starly.discordauth.unauth.other")) {
+                        player.sendMessage(messageConfig.getMessage("others.no_permission"));
+                        return true;
+                    }
+
+                    Player target = Bukkit.getPlayer(args[1]);
+                    if (target == null) {
+                        player.sendMessage(messageConfig.getMessage("others.player_not_found"));
+                        return true;
+                    }
+
+                    PlayerAuthData targetData = new PlayerAuthData(target);
+
+                    targetData.setAuthenticated(false);
+                    targetData.setDiscordId("");
+                    player.sendMessage(messageConfig.getMessage("messages.unauthorized"));
+                    return true;
+                }
             }
-        } else {
-            player.sendMessage(messageConfig.getMessage("others.wrong_command"));
-            return true;
         }
 
+        player.sendMessage(messageConfig.getMessage("others.wrong_command"));
         return false;
-    }
-
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        if (args.length == 1) return sender.isOp() ? List.of("리로드", "발급") : List.of("발급");
-
-        return Collections.emptyList();
     }
 }

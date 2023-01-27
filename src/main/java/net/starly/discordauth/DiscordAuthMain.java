@@ -5,6 +5,7 @@ import net.starly.core.data.Config;
 import net.starly.core.data.MessageConfig;
 import net.starly.discordauth.bot.Bot;
 import net.starly.discordauth.command.DiscordAuthCmd;
+import net.starly.discordauth.command.tabcompelete.DiscordAuthTab;
 import net.starly.discordauth.data.PlayerAuthData;
 import net.starly.discordauth.event.PlayerJoinListener;
 import net.starly.discordauth.event.PlayerMoveListener;
@@ -39,7 +40,7 @@ public class DiscordAuthMain extends JavaPlugin {
 
         //Commands
         Bukkit.getPluginCommand("discordauth").setExecutor(new DiscordAuthCmd());
-        Bukkit.getPluginCommand("discordauth").setTabCompleter(new DiscordAuthCmd());
+        Bukkit.getPluginCommand("discordauth").setTabCompleter(new DiscordAuthTab());
 
 
         //Configs
