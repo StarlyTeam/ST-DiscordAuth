@@ -94,34 +94,37 @@ public class Bot {
     }
 
     private void loadStatus() {
-        OnlineStatus st = OnlineStatus.ONLINE; //기본값
-        switch (DiscordAuthMain.botConfig.getString("bot_settings.status")) {
-            case "online" -> st = OnlineStatus.ONLINE;
-            case "idle" -> st = OnlineStatus.IDLE;
-            case "dnd" -> st = OnlineStatus.DO_NOT_DISTURB;
-            default -> {
-                log.warning("봇 상태 설정중에 오류가 발생했습니다!");
-                disableIt();
-                return;
-            }
+        String statusType = DiscordAuthMain.botConfig.getString("bot_settings.status");
+        if (statusType.equals("online")) {
+            jda.getPresence().setStatus(OnlineStatus.ONLINE);
+        } else if (statusType.equals("idle")) {
+            jda.getPresence().setStatus(OnlineStatus.IDLE);
+        } else if (statusType.equals("dnd")) {
+            jda.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
+        } else {
+            log.warning("봇 상태 설정중에 오류가 발생했습니다!");
+            disableIt();
+            return;
         }
 
-        Activity.ActivityType act = Activity.ActivityType.PLAYING; //기본값
-        switch (DiscordAuthMain.botConfig.getString("bot_settings.richPresence.type")) {
-            case "playing" -> act = Activity.ActivityType.PLAYING;
-            case "watching" -> act = Activity.ActivityType.WATCHING;
-            case "listening" -> act = Activity.ActivityType.LISTENING;
-            default -> {
-                log.warning("봇 상태 설정중에 오류가 발생했습니다!");
-                disableIt();
-                return;
-            }
+        String activityType = DiscordAuthMain.botConfig.getString("bot_settings.richPresence.type");
+        if (activityType.equals("playing")) {
+            Activity.ActivityType act = Activity.ActivityType.PLAYING;
+            Activity ac = Activity.of(act, DiscordAuthMain.botConfig.getString("bot_settings.richPresence.name"));
+            jda.getPresence().setPresence(ac, false);
+        } else if (activityType.equals("watching")) {
+            Activity.ActivityType act = Activity.ActivityType.WATCHING;
+            Activity ac = Activity.of(act, DiscordAuthMain.botConfig.getString("bot_settings.richPresence.name"));
+            jda.getPresence().setPresence(ac, false);
+        } else if (activityType.equals("listening")) {
+            Activity.ActivityType act = Activity.ActivityType.LISTENING;
+            Activity ac = Activity.of(act, DiscordAuthMain.botConfig.getString("bot_settings.richPresence.name"));
+            jda.getPresence().setPresence(ac, false);
+        } else {
+            log.warning("봇 상태 설정중에 오류가 발생했습니다!");
+            disableIt();
+            return;
         }
-
-        Activity ac = Activity.of(act, DiscordAuthMain.botConfig.getString("bot_settings.richPresence.name"));
-
-        jda.getPresence().setPresence(ac, false);
-        jda.getPresence().setStatus(st);
     }
 
     private void loadCommands() {
