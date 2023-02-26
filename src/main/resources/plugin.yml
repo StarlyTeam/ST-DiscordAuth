@@ -6,7 +6,7 @@ website: http://starly.kr/discord
 description: DiscordAuth Plugin.
 
 api-version: 1.13
-version: 1.2.3
+version: 1.2.4
 
 softdepend:
   - ST-Core
