@@ -110,7 +110,7 @@ location:
   # 인증 로비 좌표 설정
   verify_lobby:
     # 인증 로비 텔레포트 활성화
-    enable: true
+    enable: false
 
     # 메세지
     message:
@@ -133,7 +133,7 @@ location:
   # 인증 완료 후 텔레포트할 좌표 설정
   lobby:
     # 활성화
-    enable: true
+    enable: false
 
     # 메세지
     message:
