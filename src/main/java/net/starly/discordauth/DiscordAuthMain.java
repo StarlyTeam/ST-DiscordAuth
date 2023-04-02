@@ -26,7 +26,8 @@ public class DiscordAuthMain extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (Bukkit.getPluginManager().getPlugin("ST-Core") == null) {
+        // DEPENDENCY
+        if (!isPluginEnabled("net.starly.core.StarlyCore")) {
             Bukkit.getLogger().warning("[" + this.getName() + "] ST-Core 플러그인이 적용되지 않았습니다! 플러그인을 비활성화합니다.");
             Bukkit.getLogger().warning("[" + this.getName() + "] 다운로드 링크 : &fhttps://discord.gg/TF8jqSJjCG");
             Bukkit.getPluginManager().disablePlugin(this);
@@ -34,16 +35,15 @@ public class DiscordAuthMain extends JavaPlugin {
         }
 
         plugin = this;
-
         new Metrics(this, 17295);
 
 
-        //Commands
-        Bukkit.getPluginCommand("discordauth").setExecutor(new DiscordAuthCmd());
-        Bukkit.getPluginCommand("discordauth").setTabCompleter(new DiscordAuthTab());
+        // COMMAND
+        getServer().getPluginCommand("discord-auth").setExecutor(new DiscordAuthCmd());
+        getServer().getPluginCommand("discord-auth").setTabCompleter(new DiscordAuthTab());
 
 
-        //Configs
+        // CONFIG
         config = new Config("config", plugin);
         config.loadDefaultConfig();
         config.setPrefix("prefix");
@@ -55,18 +55,17 @@ public class DiscordAuthMain extends JavaPlugin {
         config.loadDefaultConfig();
         messageConfig = new MessageConfig(config, "prefix");
 
-
-        //EventHandlers
+        // EVENT
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), plugin);
         if (config.getBoolean("other_settings.enable_cancellation_move")) Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(), plugin);
 
 
-        //Bot
+        // BOT
         if (botConfig.getBoolean("bot_settings.enable"))
             bot = new Bot(this, botConfig.getString("bot_settings.token"));
 
 
-        // Tasks
+        // SCHEDULER
         if (config.getBoolean("messages.not_verified_title.enable")) {
             new BukkitRunnable() {
                 @Override
@@ -85,16 +84,9 @@ public class DiscordAuthMain extends JavaPlugin {
             }.runTaskTimerAsynchronously(this, 0, config.getLong("messages.not_verified_title.interval") * 20L);
         }
 
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            Bukkit.getLogger().info("§aPlaceholderAPI 플러그인이 적용되어 있습니다! PlaceholderAPI 확장을 적용합니다.");
-
-            DiscordAuthExpansion discordAuthExpansion = new DiscordAuthExpansion();
-            if (discordAuthExpansion.canRegister()) {
-                discordAuthExpansion.register();
-            }
-        } else {
-            Bukkit.getLogger().warning("PlaceholderAPI 플러그인이 적용되어 있지 않습니다! PlaceholderAPI 확장을 적용하지 않습니다.");
-        }
+        if (!isPluginEnabled("me.clip.placeholderapi.PlaceholderAPIPlugin"))
+            Bukkit.getLogger().warning("[" + plugin.getName() + "] PlaceholderAPI 플러그인이 존재하지 않아 PAPI 기능이 비활성화 됩니다.");
+        else new DiscordAuthExpansion().register();
     }
 
     @Override
@@ -105,5 +97,14 @@ public class DiscordAuthMain extends JavaPlugin {
 
     public static JavaPlugin getPlugin() {
         return plugin;
+    }
+
+    private boolean isPluginEnabled(String path) {
+        try {
+            Class.forName(path);
+            return true;
+        } catch (NoClassDefFoundError ignored) {
+        } catch (Exception ex) { ex.printStackTrace(); }
+        return false;
     }
 }
