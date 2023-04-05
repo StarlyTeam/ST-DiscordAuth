@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'net.starly.discordauth'
-version '1.2.5'
+version '1.2.6'
 
 repositories {
     mavenCentral()
@@ -24,7 +24,7 @@ dependencies {
 
     // OTHER DEPENDENCIES
     compileOnly "net.starly.core:ST-Core:1.5.5"
-    compileOnly "me.clip:Placeholder-API:2.11.2"
+    compileOnly "me.clip:PlaceholderAPI:2.11.2"
     api "net.dv8tion:JDA:5.0.0-alpha.22"
 }
 

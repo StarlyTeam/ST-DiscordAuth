@@ -119,6 +119,16 @@ public class DiscordAuthCmd implements CommandExecutor {
                 data.setDiscordId("");
                 data.saveConfig();
                 player.sendMessage(messageConfig.getMessage("messages.unauthorized"));
+
+                if (DiscordAuthMain.config.getBoolean("location.verify_lobby.enable")) {
+                    player.teleport(DiscordAuthMain.config.getLocation("location.verify_lobby.location"));
+                    try {
+                        DiscordAuthMain.config.getMessages("location.verify_lobby.message").forEach(player::sendMessage);
+                    } catch (NoSuchMethodError ex) {
+                        Bukkit.getLogger().info("§9[§eDiscordAuth§9] §eST-Core §c플러그인의 버전이 너무 낮습니다. 1.4.1 이상의 버전으로 업데이트 해주세요.");
+                        Bukkit.getLogger().info("§9[§eDiscordAuth§9] §eST-Core §f플러그인 다운로드 : §7https://discord.gg/TF8jqSJjCG");
+                    }
+                }
                 return true;
             } else if (args.length == 2) {
                 if (!player.hasPermission("starly.discordauth.unauth.other")) {
@@ -138,6 +148,16 @@ public class DiscordAuthCmd implements CommandExecutor {
                 targetData.setDiscordId("");
                 targetData.saveConfig();
                 player.sendMessage(messageConfig.getMessage("messages.unauthorized"));
+
+                if (DiscordAuthMain.config.getBoolean("location.verify_lobby.enable")) {
+                    target.teleport(DiscordAuthMain.config.getLocation("location.verify_lobby.location"));
+                    try {
+                        DiscordAuthMain.config.getMessages("location.verify_lobby.message").forEach(target::sendMessage);
+                    } catch (NoSuchMethodError ex) {
+                        Bukkit.getLogger().info("§9[§eDiscordAuth§9] §eST-Core §c플러그인의 버전이 너무 낮습니다. 1.4.1 이상의 버전으로 업데이트 해주세요.");
+                        Bukkit.getLogger().info("§9[§eDiscordAuth§9] §eST-Core §f플러그인 다운로드 : §7https://discord.gg/TF8jqSJjCG");
+                    }
+                }
                 return true;
             }
         } else {

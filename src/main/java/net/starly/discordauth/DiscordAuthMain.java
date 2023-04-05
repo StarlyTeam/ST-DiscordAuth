@@ -29,7 +29,7 @@ public class DiscordAuthMain extends JavaPlugin {
         // DEPENDENCY
         if (!isPluginEnabled("net.starly.core.StarlyCore")) {
             Bukkit.getLogger().warning("[" + this.getName() + "] ST-Core 플러그인이 적용되지 않았습니다! 플러그인을 비활성화합니다.");
-            Bukkit.getLogger().warning("[" + this.getName() + "] 다운로드 링크 : &fhttps://discord.gg/TF8jqSJjCG");
+            Bukkit.getLogger().warning("[" + this.getName() + "] 다운로드 링크 : &fhttp://starly.kr/");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
