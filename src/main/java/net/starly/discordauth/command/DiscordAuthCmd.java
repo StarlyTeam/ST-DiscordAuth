@@ -1,5 +1,8 @@
 package net.starly.discordauth.command;
 
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.starly.discordauth.DiscordAuthMain;
 import net.starly.discordauth.data.AuthCodeMapData;
 import net.starly.discordauth.data.PlayerAuthData;
@@ -15,6 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 
+import static net.starly.discordauth.DiscordAuthMain.botConfig;
 import static net.starly.discordauth.DiscordAuthMain.messageConfig;
 
 public class DiscordAuthCmd implements CommandExecutor {
@@ -116,6 +120,17 @@ public class DiscordAuthCmd implements CommandExecutor {
                 }
 
                 data.setAuthenticated(false);
+
+                //역할 지급
+                try {
+                    Guild guild = DiscordAuthMain.bot.getJDA().getGuildById(botConfig.getString("bot_settings.guildId"));
+                    Member member = guild.getMemberById(data.getDiscordId());
+                    Role role = guild.getRoleById(botConfig.getString("bot_settings.roles.verifiedRole"));
+                    guild.removeRoleFromMember(member, role).queue();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
                 data.setDiscordId("");
                 data.saveConfig();
                 player.sendMessage(messageConfig.getMessage("messages.unauthorized"));
