@@ -9,7 +9,7 @@ softdepend:
   - ST-Core
   - PlaceholderAPI
 
-version: 2.0.1
+version: 2.0.2
 api-version: 1.13
 
 commands:
