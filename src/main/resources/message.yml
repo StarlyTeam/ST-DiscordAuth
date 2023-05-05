@@ -93,7 +93,10 @@ errorMessages:
   commandBlocked: "&c명령어를 사용하시려면 인증을 해주세요."
 
   # 채팅을 칠 수 없는 경우
-  chatBlocked: "&c채팅을 사용하시려면 인증을 해주세요."
+  chatBlocked: "&c채팅을 전송하시려면 인증을 해주세요."
 
   # 상호작용을 할 수 없는 경우
   interactBlocked: "&c상호작용을 하시려면 인증을 해주세요."
+
+  # 움직일 수 없는 경우
+  moveBlocked: "&c이동을 하시려면 인증을 해주세요."

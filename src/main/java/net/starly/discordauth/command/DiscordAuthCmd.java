@@ -2,6 +2,7 @@ package net.starly.discordauth.command;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.starly.discordauth.DiscordAuthMain;
 import net.starly.discordauth.bot.DiscordAuthBot;
 import net.starly.discordauth.bot.manager.RoleManager;
@@ -129,9 +130,14 @@ public class DiscordAuthCmd implements CommandExecutor {
                 }
 
 
+                authRepository.setDiscordId(player.getUniqueId(), null);
+
+
                 try {
                     RoleManager roleManager = RoleManager.getInstance();
                     roleManager.getGuild().removeRoleFromMember(roleManager.getGuild().getMemberById(discordId), roleManager.getUserRole()).queue();
+                } catch (HierarchyException ignored) {
+                    DiscordAuthMain.getInstance().getLogger().warning("서버 주인 또는 봇보다 높은 권한을 가진 멤버의 역할은 수정 할 수 없습니다.");
                 } catch (NullPointerException ignored) {}
 
 

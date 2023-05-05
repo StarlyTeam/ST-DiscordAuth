@@ -3,6 +3,7 @@ package net.starly.discordauth.bot.listener;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.starly.discordauth.DiscordAuthMain;
 import net.starly.discordauth.bot.manager.RoleManager;
@@ -64,13 +65,17 @@ public class ModalListener extends ListenerAdapter {
                     .send(player);
 
 
-            RoleManager roleManager = RoleManager.getInstance();
-            roleManager.getGuild().addRoleToMember(discordUser, roleManager.getUserRole()).queue();
-            roleManager.getGuild().modifyNickname(roleManager.getGuild().getMemberById(discordUser.getId()),
-                    settingContext.get(SettingType.CONFIG, "auth.changeNickname")
-                            .replace("{discordTag}", discordUser.getAsTag())
-                            .replace("{playerName}", player.getDisplayName())
-                            .replace("{playerId}", String.valueOf(player.getUniqueId())));
+            try {
+                RoleManager roleManager = RoleManager.getInstance();
+                roleManager.getGuild().addRoleToMember(discordUser, roleManager.getUserRole()).queue();
+                roleManager.getGuild().modifyNickname(roleManager.getGuild().getMemberById(discordUser.getId()),
+                        settingContext.get(SettingType.CONFIG, "auth.changeNickname")
+                                .replace("{discordTag}", discordUser.getAsTag())
+                                .replace("{playerName}", player.getDisplayName())
+                                .replace("{playerId}", String.valueOf(player.getUniqueId())));
+            } catch (HierarchyException ignored) {
+                DiscordAuthMain.getInstance().getLogger().warning("서버 주인 또는 봇보다 높은 권한을 가진 멤버의 역할은 수정 할 수 없습니다.");
+            }
 
 
             VerifyCodeManager.getInstance().remove(verifyCode);

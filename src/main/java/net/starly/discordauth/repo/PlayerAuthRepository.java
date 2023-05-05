@@ -54,7 +54,8 @@ public class PlayerAuthRepository {
     }
 
     public void setDiscordId(UUID playerId, String discordId) {
-        map.put(playerId, discordId);
+        if (discordId == null) map.remove(playerId);
+        else map.put(playerId, discordId);
     }
 
     public boolean isAuthenticated(UUID playerId) {

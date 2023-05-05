@@ -24,7 +24,7 @@ public class TitleScheduler extends BukkitRunnable {
     @Override
     public void run() {
         SettingContext settingContext = SettingContext.getInstance();
-        if (settingContext.get(SettingType.CONFIG, "auth.authRequestTitle.enable", Boolean.class)) return;
+        if (!settingContext.get(SettingType.CONFIG, "auth.authRequestTitle.enable", Boolean.class)) return;
 
         String title = ChatColor.translateAlternateColorCodes('&', settingContext.get(SettingType.CONFIG, "auth.authRequestTitle.title"));
         String subTitle = ChatColor.translateAlternateColorCodes('&', settingContext.get(SettingType.CONFIG, "auth.authRequestTitle.subTitle"));
