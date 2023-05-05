@@ -73,6 +73,9 @@ public class ModalListener extends ListenerAdapter {
                             .replace("{playerId}", String.valueOf(player.getUniqueId())));
 
 
+            VerifyCodeManager.getInstance().remove(verifyCode);
+
+
             TeleportUtil.teleport(TeleportUtil.LobbyType.LOBBY, player);
         }
     }
