@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class DiscordAuthExpansion extends PlaceholderExpansion {
     @Override
     public @NotNull String getIdentifier() {
-        return "discordauth";
+        return "stdiscordauth";
     }
 
     @Override
