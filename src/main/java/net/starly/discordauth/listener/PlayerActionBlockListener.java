@@ -6,6 +6,7 @@ import net.starly.discordauth.context.message.enums.MessageType;
 import net.starly.discordauth.context.setting.SettingContext;
 import net.starly.discordauth.context.setting.enums.SettingType;
 import net.starly.discordauth.repo.PlayerAuthRepository;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -56,6 +57,10 @@ public class PlayerActionBlockListener implements Listener {
 
         Player player = event.getPlayer();
         if (player.isOp() || authRepository.isAuthenticated(player.getUniqueId())) return;
+
+        Location from = event.getFrom();
+        Location to = event.getTo();
+        if (from.getX() == to.getX() && from.getY() == to.getY() && from.getZ() == to.getZ()) return;
 
 
         messageContext.get(MessageType.ERROR, "moveBlocked").send(player);

@@ -3,6 +3,7 @@ package net.starly.discordauth.runnable;
 import net.starly.discordauth.DiscordAuthMain;
 import net.starly.discordauth.context.setting.SettingContext;
 import net.starly.discordauth.context.setting.enums.SettingType;
+import net.starly.discordauth.repo.PlayerAuthRepository;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -32,6 +33,11 @@ public class TitleScheduler extends BukkitRunnable {
         int stay = settingContext.get(SettingType.CONFIG, "auth.authRequestTitle.stay", Integer.class) * 20;
         int fadeOut = settingContext.get(SettingType.CONFIG, "auth.authRequestTitle.fadeOut", Integer.class) * 20;
 
-        DiscordAuthMain.getInstance().getServer().getOnlinePlayers().forEach(player -> player.sendTitle(title, subTitle, fadeIn, stay, fadeOut));
+        PlayerAuthRepository authRepository = DiscordAuthMain.getPlayerAuthRepository();
+        DiscordAuthMain.getInstance().getServer().getOnlinePlayers().forEach(player -> {
+            if (authRepository.isAuthenticated(player.getUniqueId())) return;
+
+            player.sendTitle(title, subTitle, fadeIn, stay, fadeOut);
+        });
     }
 }
