@@ -30,6 +30,22 @@ auth:
   changeNickname: "[ {playerName} ]"
 
 
+  # 미인증시 활동 제한
+  block:
+
+    # 명령어
+    command: true
+
+    # 채팅
+    chat: true
+
+    # 상호작용
+    interact: true
+
+    # 움직임
+    move: true
+
+
   # 인증 요구 타이틀
   authRequestTitle:
 
