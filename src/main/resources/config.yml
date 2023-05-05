@@ -40,10 +40,20 @@ auth:
     title: "&8[&6/인증&8]"
 
     # 서브 타이틀
-    subtitle: "&7인증을 해주세요!"
+    subTitle: "&7인증을 해주세요!"
 
-    # 페이드인
-    fadein:
+    # 페이드 인
+    fadeIn: 1
+
+    # 유지
+    stay: 3
+
+    # 페이드 아웃
+    fadeOut: 1
+
+
+    # 표시 간격
+    interval: 10
 
 
   # 인증 로비

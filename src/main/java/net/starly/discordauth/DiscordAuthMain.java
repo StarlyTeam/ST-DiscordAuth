@@ -16,6 +16,7 @@ import net.starly.discordauth.listener.PlayerJoinListener;
 import net.starly.discordauth.repo.PlayerAuthRepository;
 import net.starly.discordauth.context.setting.SettingLoader;
 import net.starly.discordauth.context.setting.enums.SettingType;
+import net.starly.discordauth.runnable.TitleScheduler;
 import net.starly.discordauth.support.papi.DiscordAuthExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -82,6 +83,10 @@ public class DiscordAuthMain extends JavaPlugin {
         getServer().getPluginCommand("discord-auth").setExecutor(new DiscordAuthCmd());
         getServer().getPluginCommand("discord-auth").setTabCompleter(new DiscordAuthTab());
 
+        /* TASK
+         ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        TitleScheduler.start(instance);
+
         /* SUPPORT
          ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         if (isPluginEnabled("PlaceholderAPI")) new DiscordAuthExpansion().register();
@@ -96,6 +101,8 @@ public class DiscordAuthMain extends JavaPlugin {
         MessageContext.getInstance().reset();
         EmbedContext.getInstance().reset();
         VerifyCodeManager.getInstance().reset();
+
+        TitleScheduler.stop();
     }
 
     private boolean isPluginEnabled(String name) {
