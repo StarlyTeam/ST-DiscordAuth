@@ -1,110 +1,98 @@
 package net.starly.discordauth;
 
+import lombok.Getter;
 import net.starly.core.bstats.Metrics;
-import net.starly.core.data.Config;
-import net.starly.core.data.MessageConfig;
-import net.starly.discordauth.bot.Bot;
+import net.starly.discordauth.bot.DiscordAuthBot;
+import net.starly.discordauth.context.embed.EmbedContext;
+import net.starly.discordauth.context.embed.EmbedLoader;
 import net.starly.discordauth.command.DiscordAuthCmd;
-import net.starly.discordauth.command.tabcompelete.DiscordAuthTab;
-import net.starly.discordauth.data.PlayerAuthData;
-import net.starly.discordauth.event.PlayerJoinListener;
-import net.starly.discordauth.event.PlayerMoveListener;
-import net.starly.discordauth.expansion.DiscordAuthExpansion;
+import net.starly.discordauth.command.tabcomplete.DiscordAuthTab;
+import net.starly.discordauth.context.message.MessageContext;
+import net.starly.discordauth.context.message.MessageLoader;
+import net.starly.discordauth.context.setting.SettingContext;
+import net.starly.discordauth.data.VerifyCodeManager;
+import net.starly.discordauth.repo.PlayerAuthRepository;
+import net.starly.discordauth.context.setting.SettingLoader;
+import net.starly.discordauth.context.setting.enums.SettingType;
+import net.starly.discordauth.support.papi.DiscordAuthExpansion;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
+
+import java.io.File;
 
 public class DiscordAuthMain extends JavaPlugin {
-    private static JavaPlugin plugin;
-    public static MessageConfig messageConfig;
-    public static Config config;
-    public static Config botConfig;
 
-    public static Bot bot;
+    @Getter private static DiscordAuthMain instance;
+    @Getter private static PlayerAuthRepository playerAuthRepository;
+    @Getter private DiscordAuthBot bot;
 
     @Override
     public void onEnable() {
-        // DEPENDENCY
-        if (!isPluginEnabled("net.starly.core.StarlyCore")) {
-            Bukkit.getLogger().warning("[" + this.getName() + "] ST-Core 플러그인이 적용되지 않았습니다! 플러그인을 비활성화합니다.");
-            Bukkit.getLogger().warning("[" + this.getName() + "] 다운로드 링크 : &fhttp://starly.kr/");
+        /* DEPENDENCY
+         ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        if (!isPluginEnabled("ST-Core")) {
+            Bukkit.getLogger().warning("[" + getName() + "] ST-Core 플러그인이 적용되지 않았습니다! 플러그인을 비활성화합니다.");
+            Bukkit.getLogger().warning("[" + getName() + "] 다운로드 링크 : §fhttp://starly.kr/");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
-        plugin = this;
-        new Metrics(this, 17295);
+        /* SETUP
+         ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        instance = this;
+        playerAuthRepository = new PlayerAuthRepository();
+        new Metrics(instance, 17295);
 
+        /* CONFIG - GENERAL
+         ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        saveDefaultConfig();
+        SettingLoader.loadSettingFile(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")), SettingType.CONFIG);
 
-        // COMMAND
+        File messageFile = new File(getDataFolder(), "message.yml");
+        if (!messageFile.exists()) saveResource("message.yml", true);
+        MessageLoader.loadMessageFile(YamlConfiguration.loadConfiguration(messageFile));
+
+        /* CONFIG - BOT
+         ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        File botSettingFile = new File(getDataFolder(), "bot/config.yml");
+        if (!botSettingFile.exists()) saveResource("bot/config.yml", true);
+        SettingLoader.loadSettingFile(YamlConfiguration.loadConfiguration(botSettingFile), SettingType.BOT_CONFIG);
+
+        File embedFile = new File(getDataFolder(), "bot/embed.yml");
+        if (!embedFile.exists()) saveResource("bot/embed.yml", true);
+        EmbedLoader.loadEmbedFile(YamlConfiguration.loadConfiguration(embedFile));
+
+        playerAuthRepository.initialize(new File(getDataFolder(), "authData.yml"));
+
+        /* BOT
+         ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        bot = new DiscordAuthBot();
+
+        /* COMMAND
+         ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         getServer().getPluginCommand("discord-auth").setExecutor(new DiscordAuthCmd());
         getServer().getPluginCommand("discord-auth").setTabCompleter(new DiscordAuthTab());
 
-
-        // CONFIG
-        config = new Config("config", plugin);
-        config.loadDefaultConfig();
-        config.setPrefix("prefix");
-
-        botConfig = new Config("bot", plugin);
-        botConfig.loadDefaultConfig();
-
-        Config config = new Config("config", plugin);
-        config.loadDefaultConfig();
-        messageConfig = new MessageConfig(config, "prefix");
-
-        // EVENT
-        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), plugin);
-        if (config.getBoolean("other_settings.enable_cancellation_move")) Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(), plugin);
-
-
-        // BOT
-        if (botConfig.getBoolean("bot_settings.enable"))
-            bot = new Bot(this, botConfig.getString("bot_settings.token"));
-
-
-        // SCHEDULER
-        if (config.getBoolean("messages.not_verified_title.enable")) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        PlayerAuthData data = new PlayerAuthData(player);
-                        if (data.isAuthenticated()) return;
-
-                        player.sendTitle(ChatColor.translateAlternateColorCodes('&', config.getString("messages.not_verified_title.title")),
-                                ChatColor.translateAlternateColorCodes('&', config.getString("messages.not_verified_title.subtitle")),
-                                config.getInt("messages.not_verified_title.fadein") * 20,
-                                config.getInt("messages.not_verified_title.stay") * 20,
-                                config.getInt("messages.not_verified_title.fadeout") * 20);
-                    }
-                }
-            }.runTaskTimerAsynchronously(this, 0, config.getLong("messages.not_verified_title.interval") * 20L);
-        }
-
-        if (!isPluginEnabled("me.clip.placeholderapi.PlaceholderAPIPlugin"))
-            Bukkit.getLogger().warning("[" + plugin.getName() + "] PlaceholderAPI 플러그인이 존재하지 않아 PAPI 기능이 비활성화 됩니다.");
-        else new DiscordAuthExpansion().register();
+        /* SUPPORT
+         ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        if (isPluginEnabled("PlaceholderAPI")) new DiscordAuthExpansion().register();
+        else System.out.println("PlaceholderAPI 플러그인이 적용되지 않아, 일부기능이 비활성화됩니다.");
     }
 
     @Override
     public void onDisable() {
-        if (bot != null)
-            bot.getJDA().shutdown();
+        bot.shutdown();
+
+        SettingContext.getInstance().reset();
+        MessageContext.getInstance().reset();
+        EmbedContext.getInstance().reset();
+        VerifyCodeManager.getInstance().reset();
     }
 
-    public static JavaPlugin getPlugin() {
-        return plugin;
-    }
-
-    private boolean isPluginEnabled(String path) {
-        try {
-            Class.forName(path);
-            return true;
-        } catch (ClassNotFoundException ignored) {
-        } catch (Exception ex) { ex.printStackTrace(); }
-        return false;
+    private boolean isPluginEnabled(String name) {
+        Plugin plugin = getServer().getPluginManager().getPlugin(name);
+        return plugin != null && plugin.isEnabled();
     }
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'net.starly.discordauth'
-version '1.2.7'
+version '2.0'
 
 repositories {
     mavenCentral()
@@ -18,12 +18,14 @@ repositories {
 dependencies {
     //JAVA DEPENDENCIES
     compileOnly "org.jetbrains:annotations:23.0.0"
+    compileOnly "org.projectlombok:lombok:1.18.24"
+    annotationProcessor "org.projectlombok:lombok:1.18.24"
 
     //BUKKIT DEPENDENCIES
-    compileOnly "org.spigotmc:spigot-api:R0.1:1.16.5"
+    compileOnly "org.spigotmc:spigot-api:R0.1:1.12.2"
 
     // OTHER DEPENDENCIES
-    compileOnly "net.starly.core:ST-Core:1.5.5"
+    compileOnly "net.starly.core:ST-Core:1.7.4"
     compileOnly "me.clip:PlaceholderAPI:2.11.2"
     api "net.dv8tion:JDA:5.0.0-alpha.22"
 }
@@ -31,8 +33,6 @@ dependencies {
 jar {
     finalizedBy shadowJar
 }
-
-compileJava.options.encoding = 'UTF-8'
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'

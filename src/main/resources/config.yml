@@ -1,151 +1,63 @@
-# 접두사
-prefix: "&7&l[&r&9디스코드&7&l] &r"
+# 출력 문자열
+text:
 
-# 메세지
-messages:
+  # PlaceholderAPI
+  papi:
 
-  # /인증 실행했을 때 인증안한 플레이어에게 보내는 메세지
-  # {player} - 플레이어 이름
-  not_authenticated:
-    - "&c---------------"
-    - "&e인증을 하지 않으셨습니다."
-    - "&c---------------"
+    # %discordauth_auth%
+    auth:
 
-  # /인증 실행했을 때 인증한 플레이어에게 보내는 메세지
-  # {player} - 플레이어 이름
-  authenticated:
-    - "&a---------------"
-    - "&e인증을 이미 하셨습니다."
-    - "&a---------------"
+      # 인증됨
+      true: "&a✔"
 
-  # /인증 발급 을 쳤을 때 인증 코드를 이미 발급하였을 때
-  already_requested: "&f 이미 발급받은 코드가 있습니다. 해당 코드가 만료되면 다시 시도해주세요."
+      # 인증되지 않음
+      false: "&c✗"
 
-  # 인증코드를 발급 하였을 때
-  verify_code_generated:
-    - ""
-    - "&f{remain_time}초 이내에 입력해주세요."
-    - "&f인증코드가 발급되었습니다! 인증코드: &a{code}"
-    - ""
 
-  # 인증코드가 만료되었을 때
-  code_expired: "&f발급한 인증코드가 만료되었습니다."
+# 인증 설정
+auth:
 
-  # 이미 연동된 계정일 경우
-  already_authenticated: "&f이미 인증된 계정입니다. &7(연동 계정을 변경하시려면 &e[&6/연동 해제&e]&7를 입력해주세요.)"
+  # 인증 코드 만료 기간 (초)
+  codeExpirationTime: 60
 
-  # 인증을 안했을 때 표시되는 타이틀
-  not_verified_title:
+  # 미인증시 움직임, 블럭 파괴/설치 방지
+  cancellationAction: true
 
-    # 표시 간격
-    interval: 10
 
-    # 타이틀 활성화
+  # 인증 로비
+  # 인증 미완료시 설정된 위치로 텔레포트 됩니다.
+  verifyLobby:
+
+    # 활성화 여부
     enable: true
 
-    # 대 제목
-    title: "&8[ &6/인증 &8]"
-
-    # 소 제목
-    subtitle: "&e인증&f을 해주세요!"
-
-    # 보여지는 애니메이션 시간
-    fadein: 1
-
-    # 유지 시간
-    stay: 2
-
-    # 없어지는 애니메이션 시간
-    fadeout: 1
-
-  # 계정 연동 완료시, 플레이어에게 보내는 메세지
-  connected: "&f디스코드 계정({tag})과 연동되었습니다."
-
-  # 계정 연동 완료시, OP에게 보내는 메세지
-  # {player} - 플레이어 이름
-  # {tag} - 디스코드 태그
-  connected_op: "&f플레이어 {player}님이 디스코드 계정({tag})과 연동하였습니다."
-
-  # 계정 연동 해제 완료시, 플레이어에게 보내는 메세지
-  unauthorized: "&f디스코드 계정과 연동이 해제되었습니다."
-
-# 기타 메세지
-others:
-
-  # 인증 코드 만료 기간 | 만료 이전 재발급 불가
-  code_expire_time: 20
-
-  # 콘솔에서 인증 커맨드를 사용할 시
-  cannot_execute_in_console: "&c이 명령어는 콘솔에서 사용할 수 없습니다!"
-
-  # 권한이 없는 커맨드를 사용할 시
-  no_permission: "&c이 명령어를 사용할 권한이 없습니다."
-
-  # 콘피그를 리로드 하였을 때
-  reloaded_config: "&a성공적으로 콘피그를 리로드하였습니다!"
-
-  # 잘못된 명령어
-  wrong_command: "&c잘못된 명령어입니다. &e/인증&f을 확인해주세요."
-
-  # 플레이어가 없는 경우
-  player_not_found: "&c플레이어를 찾을 수 없습니다."
-
-#기타 설정
-other_settings:
-  # 미인증시 움직임 방지
-  enable_cancellation_move: true
-
-# [ %discordauth_authenticated% ] 로 사용가능
-expansion:
-
-  # 인증된 경우
-  true: "&a✔"
-
-  # 인증되지 않은 경우
-  false: "&c✗"
-
-# 좌표 설정
-location:
-
-  # 인증 로비 좌표 설정
-  verify_lobby:
-    # 인증 로비 텔레포트 활성화
-    enable: false
-
-    # 메세지
-    message:
-      - ""
-      - "&c미인증 상태이므로 인증 로비로 이동합니다."
-      - ""
-
-    # 텔레포트 시간 (초)
+    # 이동 전 지연시간
     delay: 10
 
     # 위치
     location:
       world: world
-      x: 0
-      y: 0
-      z: 0
-      yaw: 0
-      pitch: 0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      yaw: 0.0
+      pitch: 0.0
 
-  # 인증 완료 후 텔레포트할 좌표 설정
+  # 로비
+  # 인증 완료시 설정된 위치로 텔레포트 됩니다.
   lobby:
-    # 활성화
-    enable: false
 
-    # 메세지
-    message:
-      - ""
-      - "&a인증이 완료되어 로비로 이동합니다."
-      - ""
+    # 활성화 여부
+    enable: true
+
+    # 이동 전 지연시간
+    delay: 10
 
     # 위치
     location:
       world: world
-      x: 0
-      y: 0
-      z: 0
-      yaw: 0
-      pitch: 0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      yaw: 0.0
+      pitch: 0.0

@@ -1,0 +1,94 @@
+# 봇 활성화 설정
+enable: true
+
+# 봇 토큰 설정
+token: ""
+
+
+# 서버
+guildId: ""
+
+# 역할
+role:
+
+  # 관리자 역할 ID
+  moderatorRoleId: ""
+
+  # 유저 역할 ID
+  userRoleId: ""
+
+
+
+# 버튼
+button:
+
+  # 인증 버튼
+  verifyBtn:
+
+    # 커스텀 ID 설정
+    id: "VERIFY_ACC"
+
+    # 버튼 스타일 설정
+    # 종류: Primary, Secondary, Success, Danger
+    # 미리보기: https://imgur.com/a/f7JkTIH
+    style: Primary
+
+    # 버튼 텍스트 설정
+    label: "인증하기"
+
+  # 커스텀 버튼
+  customBtn:
+
+    # 커스텀 ID 설정
+    id: "VERIFY_HELP"
+
+    # 버튼 스타일 설정
+    # 종류: Primary, Secondary, Success, Danger
+    # 미리보기: https://i.imgur.com/gg8yqZe.png
+    style: Primary
+
+    # 버튼 텍스트 설정
+    label: "도움말"
+
+    # 클릭시 전송될 임베드
+    embed: "embed.customBtnEmbed"
+
+# 모달
+modal:
+
+  # 인증번호 입력 모달
+  verifyCode:
+
+    # 커스텀 ID 설정
+    id: "VERIFY_ACC"
+
+    # 제목 설정
+    title: "인증번호 입력"
+
+
+# 상태 정보
+presence:
+
+  # 활동
+  activity:
+
+    # 타입
+    #
+    # PLAYING : ~하는중
+    # STREAMING : ~방송중
+    # LISTENING : ~듣는중
+    # WATCHING : ~보는중
+    # COMPETING : ~참여중
+    type: WATCHING
+
+    # 내용
+    text: "ST-DiscordAuth"
+
+  # 상태
+  #
+  # online [온라인]
+  # idle [자리비움]
+  # dnd [방해금지]
+  # invisible [숨김 오프라인]
+  # offline [오프라인]
+  status: ONLINE

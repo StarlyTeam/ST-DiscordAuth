@@ -1,186 +1,182 @@
 package net.starly.discordauth.command;
 
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
 import net.starly.discordauth.DiscordAuthMain;
-import net.starly.discordauth.data.AuthCodeMapData;
-import net.starly.discordauth.data.PlayerAuthData;
-import net.starly.discordauth.event.PlayerJoinListener;
-import net.starly.discordauth.event.PlayerMoveListener;
-import org.bukkit.Bukkit;
+import net.starly.discordauth.bot.DiscordAuthBot;
+import net.starly.discordauth.bot.manager.RoleManager;
+import net.starly.discordauth.context.embed.EmbedContext;
+import net.starly.discordauth.context.embed.EmbedLoader;
+import net.starly.discordauth.context.message.MessageContext;
+import net.starly.discordauth.context.message.MessageLoader;
+import net.starly.discordauth.context.message.enums.MessageType;
+import net.starly.discordauth.context.setting.SettingContext;
+import net.starly.discordauth.context.setting.SettingLoader;
+import net.starly.discordauth.context.setting.enums.SettingType;
+import net.starly.discordauth.data.VerifyCodeManager;
+import net.starly.discordauth.repo.PlayerAuthRepository;
+import net.starly.discordauth.util.TeleportUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Arrays;
-
-import static net.starly.discordauth.DiscordAuthMain.botConfig;
-import static net.starly.discordauth.DiscordAuthMain.messageConfig;
+import java.io.File;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DiscordAuthCmd implements CommandExecutor {
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(messageConfig.getMessage("others.cannot_execute_in_console"));
-            return true;
-        }
+        if (!(sender instanceof Player)) return true;
         Player player = (Player) sender;
 
-        PlayerAuthData data = new PlayerAuthData(player);
+        PlayerAuthRepository authRepository = DiscordAuthMain.getPlayerAuthRepository();
+        MessageContext messageContext = MessageContext.getInstance();
+
         if (args.length == 0) {
             if (!player.hasPermission("starly.discordauth.status")) {
-                player.sendMessage(messageConfig.getMessage("others.no_permission"));
+                messageContext.get(MessageType.ERROR, "noPermission").send(player);
                 return true;
             }
 
-            if (!data.isAuthenticated()) messageConfig.getMessages("messages.not_authenticated").forEach(line -> player.sendMessage(line
-                    .replace("{player}", player.getDisplayName())));
-            else messageConfig.getMessages("messages.authenticated").forEach(line -> player.sendMessage(line
-                    .replace("{player}", player.getDisplayName())));
-
+            if (authRepository.isAuthenticated(player.getUniqueId())) {
+                User discordUser = DiscordAuthBot.getJda().getUserById(authRepository.getDiscordId(player.getUniqueId()));
+                messageContext.get(MessageType.NORMAL, "authTrue", msg -> msg
+                                .replace("{discordId}", discordUser.getId())
+                                .replace("{discordTag}", discordUser.getAsTag())
+                                .replace("{playerId}", String.valueOf(player.getUniqueId()))
+                                .replace("{playerName}", player.getDisplayName()))
+                        .send(player);
+            } else {
+                messageContext.get(MessageType.NORMAL, "authFalse", msg -> msg
+                                .replace("{playerId}", String.valueOf(player.getUniqueId()))
+                                .replace("{playerName}", player.getDisplayName()))
+                        .send(player);
+            }
             return true;
         }
 
-        if (Arrays.asList("리로드", "reload").contains(args[0].toLowerCase())) {
-            if (!player.hasPermission("starly.discordauth.reload")) {
-                player.sendMessage(messageConfig.getMessage("others.no_permission"));
-                return true;
-            }
-
-            // RELOAD CONFIG
-            DiscordAuthMain.config.loadDefaultConfig();
-            DiscordAuthMain.botConfig.loadDefaultConfig();
-
-            // RELOAD BOT
-            if (DiscordAuthMain.bot != null) DiscordAuthMain.bot.reloadBot(player);
-
-            // RELOAD EVENT HANDLERS
-            HandlerList.unregisterAll(DiscordAuthMain.getPlugin());
-            Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), DiscordAuthMain.getPlugin());
-            if (DiscordAuthMain.config.getBoolean("other_settings.enable_cancellation_move"))
-                Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(), DiscordAuthMain.getPlugin());
-
-            // RELOAD MESSAGE CONFIG
-            DiscordAuthMain.messageConfig.reloadConfig();
-
-
-            player.sendMessage(messageConfig.getMessage("others.reloaded_config"));
-            return true;
-        } else if (Arrays.asList("발급", "코드", "generate", "code").contains(args[0].toLowerCase())) {
-            if (!player.hasPermission("starly.discordauth.gencode")) {
-                player.sendMessage(messageConfig.getMessage("others.no_permission"));
-                return true;
-            }
-
-            if (data.isAuthenticated()) {
-                player.sendMessage(messageConfig.getMessage("messages.already_authenticated"));
-                return true;
-            }
-
-            if (AuthCodeMapData.authCodeMap.containsValue(player)) {
-                player.sendMessage(messageConfig.getMessage("messages.already_requested"));
-                return true;
-            }
-
-            String code;
-            do {
-                code = String.valueOf(Math.round(Math.random() * 1000000));
-            } while (code.length() != 6);
-
-            AuthCodeMapData.authCodeMap.put(code, player);
-
-            long sec = DiscordAuthMain.config.getInt("others.code_expire_time");
-            String finalCode = code;
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (AuthCodeMapData.authCodeMap.containsKey(finalCode)) {
-                        AuthCodeMapData.authCodeMap.get(finalCode).sendMessage(messageConfig.getMessage("messages.code_expired"));
-
-                        AuthCodeMapData.authCodeMap.remove(finalCode);
-                    }
-                }
-            }.runTaskLaterAsynchronously(DiscordAuthMain.getPlugin(), sec * 20L);
-
-
-            String finalCode1 = code;
-            messageConfig.getMessages("messages.verify_code_generated").forEach(line -> player.sendMessage(line
-                    .replace("{code}", finalCode1)
-                    .replace("{remain_time}", String.valueOf(sec))));
-            return true;
-        } else if (Arrays.asList("해제", "unauth").contains(args[0].toLowerCase())) {
-            if (args.length == 1) {
-                if (!player.hasPermission("starly.discordauth.unauth.self")) {
-                    player.sendMessage(messageConfig.getMessage("others.no_permission"));
+        switch (args[0]) {
+            case "발급": {
+                if (!player.hasPermission("starly.discordauth.gencode")) {
+                    messageContext.get(MessageType.ERROR, "noPermission").send(player);
+                    return true;
+                } else if (args.length != 1) {
+                    messageContext.get(MessageType.ERROR, "wrongCommand").send(player);
                     return true;
                 }
 
-                data.setAuthenticated(false);
+                String verifyCode = String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
+                int expireSec = SettingContext.getInstance().get(SettingType.CONFIG, "auth.codeExpirationTime", Integer.class);
 
-                //역할 지급
+                VerifyCodeManager codeManager = VerifyCodeManager.getInstance();
+                if (codeManager.has(player.getUniqueId())) {
+                    messageContext.get(MessageType.ERROR, "alreadyHaveAuthCode").send(player);
+                    return true;
+                }
+                codeManager.set(verifyCode, player.getUniqueId());
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        VerifyCodeManager codeManager = VerifyCodeManager.getInstance();
+                        if (codeManager.has(verifyCode)) {
+                            codeManager.remove(verifyCode);
+                            messageContext.get(MessageType.NORMAL, "authCodeExpired").send(player);
+                        }
+                    }
+                }.runTaskLater(DiscordAuthMain.getInstance(), expireSec * 20L);
+
+                messageContext.get(MessageType.NORMAL, "authCodeCreated", msg -> msg
+                                .replace("{authCode}", verifyCode)
+                                .replace("{expireSec}", String.valueOf(expireSec)))
+                        .send(player);
+                return true;
+            }
+
+            case "해제": {
+                Player target;
+                if (args.length == 1) {
+                    if (!player.hasPermission("starly.discordauth.unauth.self")) {
+                        messageContext.get(MessageType.ERROR, "noPermission").send(player);
+                        return true;
+                    }
+
+                    target = player;
+                } else if (args.length == 2) {
+                    if (!player.hasPermission("starly.discordauth.unauth.other")) {
+                        messageContext.get(MessageType.ERROR, "noPermission").send(player);
+                        return true;
+                    }
+
+                    target = DiscordAuthMain.getInstance().getServer().getPlayer(args[1]);
+                    if (target == null || !target.isOnline()) {
+                        messageContext.get(MessageType.ERROR, "playerNotFound").send(player);
+                        return true;
+                    }
+                } else {
+                    messageContext.get(MessageType.ERROR, "wrongCommand").send(player);
+                    return true;
+                }
+
+                String discordId = authRepository.getDiscordId(target.getUniqueId());
+                if (discordId == null) {
+                    messageContext.get(MessageType.NORMAL, "authFalse").send(player);
+                    return true;
+                }
+
+
                 try {
-                    Guild guild = DiscordAuthMain.bot.getJDA().getGuildById(botConfig.getString("bot_settings.guildId"));
-                    Member member = guild.getMemberById(data.getDiscordId());
-                    Role role = guild.getRoleById(botConfig.getString("bot_settings.roles.verifiedRole"));
-                    guild.removeRoleFromMember(member, role).queue();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                    RoleManager roleManager = RoleManager.getInstance();
+                    roleManager.getGuild().removeRoleFromMember(roleManager.getGuild().getMemberById(discordId), roleManager.getUserRole()).queue();
+                } catch (NullPointerException ignored) {}
 
-                data.setDiscordId("");
-                data.saveConfig();
-                player.sendMessage(messageConfig.getMessage("messages.unauthorized"));
 
-                if (DiscordAuthMain.config.getBoolean("location.verify_lobby.enable")) {
-                    player.teleport(DiscordAuthMain.config.getLocation("location.verify_lobby.location"));
-                    try {
-                        DiscordAuthMain.config.getMessages("location.verify_lobby.message").forEach(player::sendMessage);
-                    } catch (NoSuchMethodError ex) {
-                        Bukkit.getLogger().info("§9[§eDiscordAuth§9] §eST-Core §c플러그인의 버전이 너무 낮습니다. 1.4.1 이상의 버전으로 업데이트 해주세요.");
-                        Bukkit.getLogger().info("§9[§eDiscordAuth§9] §eST-Core §f플러그인 다운로드 : §7https://discord.gg/TF8jqSJjCG");
-                    }
-                }
-                return true;
-            } else if (args.length == 2) {
-                if (!player.hasPermission("starly.discordauth.unauth.other")) {
-                    player.sendMessage(messageConfig.getMessage("others.no_permission"));
-                    return true;
-                }
-
-                Player target = Bukkit.getPlayer(args[1]);
-                if (target == null) {
-                    player.sendMessage(messageConfig.getMessage("others.player_not_found"));
-                    return true;
-                }
-
-                PlayerAuthData targetData = new PlayerAuthData(target);
-
-                targetData.setAuthenticated(false);
-                targetData.setDiscordId("");
-                targetData.saveConfig();
-                player.sendMessage(messageConfig.getMessage("messages.unauthorized"));
-
-                if (DiscordAuthMain.config.getBoolean("location.verify_lobby.enable")) {
-                    target.teleport(DiscordAuthMain.config.getLocation("location.verify_lobby.location"));
-                    try {
-                        DiscordAuthMain.config.getMessages("location.verify_lobby.message").forEach(target::sendMessage);
-                    } catch (NoSuchMethodError ex) {
-                        Bukkit.getLogger().info("§9[§eDiscordAuth§9] §eST-Core §c플러그인의 버전이 너무 낮습니다. 1.4.1 이상의 버전으로 업데이트 해주세요.");
-                        Bukkit.getLogger().info("§9[§eDiscordAuth§9] §eST-Core §f플러그인 다운로드 : §7https://discord.gg/TF8jqSJjCG");
-                    }
-                }
+                TeleportUtil.teleport(TeleportUtil.LobbyType.VERIFY_LOBBY, target);
                 return true;
             }
-        } else {
-            player.sendMessage(messageConfig.getMessage("others.wrong_command"));
-            return true;
-        }
 
-        player.sendMessage(messageConfig.getMessage("others.wrong_command"));
-        return false;
+            case "리로드": {
+               if (!player.hasPermission("starly.discordauth.reload")) {
+                   messageContext.get(MessageType.ERROR, "noPermission").send(player);
+                   return true;
+               } else if (args.length != 1) {
+                    messageContext.get(MessageType.ERROR, "wrongCommand").send(player);
+                    return true;
+                }
+
+                File dataFolder = DiscordAuthMain.getInstance().getDataFolder();
+
+                SettingContext.getInstance().reset();
+                SettingLoader.loadSettingFile(YamlConfiguration.loadConfiguration(new File(dataFolder, "config.yml")), SettingType.CONFIG);
+                SettingLoader.loadSettingFile(YamlConfiguration.loadConfiguration(new File(dataFolder, "bot/config.yml")), SettingType.BOT_CONFIG);
+
+                MessageContext.getInstance().reset();
+                MessageLoader.loadMessageFile(YamlConfiguration.loadConfiguration(new File(dataFolder, "message.yml")));
+
+                EmbedContext.getInstance().reset();
+                EmbedLoader.loadEmbedFile(YamlConfiguration.loadConfiguration(new File(dataFolder, "bot/embed.yml")));
+
+                DiscordAuthMain.getInstance().reloadConfig();
+
+                RoleManager.getInstance().loadConfig();
+
+
+                DiscordAuthBot bot = DiscordAuthMain.getInstance().getBot();
+                bot.shutdown();
+                bot.start();
+
+
+                messageContext.get(MessageType.NORMAL, "reloadComplete").send(player);
+                return true;
+            }
+
+            default: {
+                return true;
+            }
+        }
     }
 }
