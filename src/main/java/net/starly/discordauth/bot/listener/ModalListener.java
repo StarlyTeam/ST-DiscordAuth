@@ -66,6 +66,11 @@ public class ModalListener extends ListenerAdapter {
 
             RoleManager roleManager = RoleManager.getInstance();
             roleManager.getGuild().addRoleToMember(discordUser, roleManager.getUserRole()).queue();
+            roleManager.getGuild().modifyNickname(roleManager.getGuild().getMemberById(discordUser.getId()),
+                    settingContext.get(SettingType.CONFIG, "auth.changeNickname")
+                            .replace("{discordTag}", discordUser.getAsTag())
+                            .replace("{playerName}", player.getDisplayName())
+                            .replace("{playerId}", String.valueOf(player.getUniqueId())));
 
 
             TeleportUtil.teleport(TeleportUtil.LobbyType.LOBBY, player);

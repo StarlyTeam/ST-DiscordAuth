@@ -23,6 +23,12 @@ auth:
   # 미인증시 움직임, 블럭 파괴/설치 방지
   cancellationAction: true
 
+  # 인증시 닉네임 변경
+  # {discordTag} : 디스코드 계정의 Tag
+  # {playerName} : 마인크래프트 계정의 이름
+  # {playerId} : 마인크래프트 계정의 UUID
+  changeNickname: "[ {playerName} ]"
+
 
   # 인증 로비
   # 인증 미완료시 설정된 위치로 텔레포트 됩니다.
