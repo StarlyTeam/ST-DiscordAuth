@@ -11,6 +11,8 @@ import net.starly.discordauth.context.message.MessageContext;
 import net.starly.discordauth.context.message.MessageLoader;
 import net.starly.discordauth.context.setting.SettingContext;
 import net.starly.discordauth.data.VerifyCodeManager;
+import net.starly.discordauth.listener.PlayerActionBlockListener;
+import net.starly.discordauth.listener.PlayerJoinListener;
 import net.starly.discordauth.repo.PlayerAuthRepository;
 import net.starly.discordauth.context.setting.SettingLoader;
 import net.starly.discordauth.context.setting.enums.SettingType;
@@ -69,6 +71,11 @@ public class DiscordAuthMain extends JavaPlugin {
         /* BOT
          ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         bot = new DiscordAuthBot();
+
+        /* LISTENER
+         ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+        getServer().getPluginManager().registerEvents(new PlayerActionBlockListener(), instance);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), instance);
 
         /* COMMAND
          ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */

@@ -30,6 +30,22 @@ auth:
   changeNickname: "[ {playerName} ]"
 
 
+  # 인증 요구 타이틀
+  authRequestTitle:
+
+    # 활성화 여부
+    enable: true
+
+    # 메인 타이틀
+    title: "&8[&6/인증&8]"
+
+    # 서브 타이틀
+    subtitle: "&7인증을 해주세요!"
+
+    # 페이드인
+    fadein:
+
+
   # 인증 로비
   # 인증 미완료시 설정된 위치로 텔레포트 됩니다.
   verifyLobby:

@@ -1,6 +1,7 @@
 package net.starly.discordauth.listener;
 
 import net.starly.discordauth.DiscordAuthMain;
+import net.starly.discordauth.repo.PlayerAuthRepository;
 import net.starly.discordauth.util.TeleportUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,9 +13,9 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        PlayerAuthRepository authRepository = DiscordAuthMain.getPlayerAuthRepository();
+        if (authRepository.isAuthenticated(player.getUniqueId())) return;
 
-        if (!DiscordAuthMain.getPlayerAuthRepository().isAuthenticated(player.getUniqueId())) {
-            TeleportUtil.teleport(TeleportUtil.LobbyType.VERIFY_LOBBY, player);
-        }
+        TeleportUtil.teleport(TeleportUtil.LobbyType.VERIFY_LOBBY, player);
     }
 }
