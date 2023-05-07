@@ -18,7 +18,7 @@ public class TitleScheduler extends BukkitRunnable {
     }
 
     public static void stop() {
-        instance.cancel();
+        if (instance != null) instance.cancel();
         instance = null;
     }
 

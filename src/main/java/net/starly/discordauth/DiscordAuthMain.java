@@ -95,7 +95,7 @@ public class DiscordAuthMain extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        bot.shutdown();
+        if (bot != null) bot.shutdown();
 
         SettingContext.getInstance().reset();
         MessageContext.getInstance().reset();
