@@ -13,7 +13,7 @@ import net.starly.discordauth.context.setting.SettingContext;
 import net.starly.discordauth.context.setting.enums.SettingType;
 import org.jetbrains.annotations.NotNull;
 
-public class AuthBtnCmd extends ListenerAdapter {
+public class DiscordAuthBtnCmd extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         SettingContext settingContext = SettingContext.getInstance();

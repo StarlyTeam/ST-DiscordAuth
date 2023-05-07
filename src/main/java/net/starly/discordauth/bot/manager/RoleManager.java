@@ -35,13 +35,16 @@ public class RoleManager {
         SettingContext settingContext = SettingContext.getInstance();
 
         this.guild = jda.getGuildById(settingContext.get(SettingType.BOT_CONFIG, "guildId"));
-        if (guild == null) DiscordAuthMain.getInstance().getLogger().severe("길드를 찾을 수 없습니다. 길드 ID를 다시 확인해주세요.");
-        else {
+        if (guild == null) {
+            DiscordAuthMain.getInstance().getLogger().severe("길드를 찾을 수 없습니다. 길드 ID를 다시 확인해주세요.");
+            DiscordAuthMain.getInstance().getServer().getPluginManager().disablePlugin(DiscordAuthMain.getInstance());
+        } else {
             try {
                 this.moderatorRole = guild.getRoleById(settingContext.get(SettingType.BOT_CONFIG, "role.moderatorRoleId"));
                 this.userRole = guild.getRoleById(settingContext.get(SettingType.BOT_CONFIG, "role.userRoleId"));
             } catch (Exception ex) {
                 DiscordAuthMain.getInstance().getLogger().severe("역할을 찾을 수 없습니다. 역할 ID를 다시 확인해주세요.");
+                DiscordAuthMain.getInstance().getServer().getPluginManager().disablePlugin(DiscordAuthMain.getInstance());
                 ex.printStackTrace();
             }
         }

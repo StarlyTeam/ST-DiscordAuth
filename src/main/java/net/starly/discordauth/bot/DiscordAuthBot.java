@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.starly.discordauth.DiscordAuthMain;
-import net.starly.discordauth.bot.command.AuthBtnCmd;
+import net.starly.discordauth.bot.command.DiscordAuthBtnCmd;
 import net.starly.discordauth.bot.listener.BtnListener;
 import net.starly.discordauth.bot.listener.ModalListener;
 import net.starly.discordauth.context.setting.SettingContext;
@@ -42,7 +42,6 @@ public class DiscordAuthBot {
 
     public void start() {
         SettingContext settingContext = SettingContext.getInstance();
-        if (!settingContext.get(SettingType.BOT_CONFIG, "enable", Boolean.class)) return;
 
         try {
             JDABuilder builder = JDABuilder.createDefault(settingContext.get(SettingType.BOT_CONFIG, "token"));
@@ -52,7 +51,7 @@ public class DiscordAuthBot {
                     .enableCache(CacheFlag.MEMBER_OVERRIDES)
                     .setEnableShutdownHook(false)
 
-                    .addEventListeners(new AuthBtnCmd())
+                    .addEventListeners(new DiscordAuthBtnCmd())
                     .addEventListeners(new BtnListener())
                     .addEventListeners(new ModalListener())
 
@@ -63,9 +62,11 @@ public class DiscordAuthBot {
             jda.awaitReady();
         } catch (IllegalArgumentException ex) {
             DiscordAuthMain.getInstance().getLogger().severe("토큰이 잘못되었습니다. 봇 토큰을 다시 확인해주세요.");
+            DiscordAuthMain.getInstance().getServer().getPluginManager().disablePlugin(DiscordAuthMain.getInstance());
             return;
         } catch (Exception ex) {
             ex.printStackTrace();
+            DiscordAuthMain.getInstance().getServer().getPluginManager().disablePlugin(DiscordAuthMain.getInstance());
             return;
         }
 
