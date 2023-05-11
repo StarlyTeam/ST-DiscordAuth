@@ -103,6 +103,8 @@ public class DiscordAuthMain extends JavaPlugin {
         VerifyCodeManager.getInstance().reset();
 
         TitleScheduler.stop();
+
+        playerAuthRepository.saveAll();
     }
 
     private boolean isPluginEnabled(String name) {
