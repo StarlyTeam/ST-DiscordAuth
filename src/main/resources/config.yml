@@ -53,7 +53,7 @@ auth:
     enable: true
 
     # 메인 타이틀
-    title: "&8[&6/인증&8]"
+    title: "&8[&6/디코연동&8]"
 
     # 서브 타이틀
     subTitle: "&7인증을 해주세요!"
