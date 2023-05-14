@@ -90,7 +90,7 @@ public class DiscordAuthMain extends JavaPlugin {
         /* SUPPORT
          ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
         if (isPluginEnabled("PlaceholderAPI")) new DiscordAuthExpansion().register();
-        else System.out.println("PlaceholderAPI 플러그인이 적용되지 않아, 일부기능이 비활성화됩니다.");
+        else getLogger().warning("PlaceholderAPI 플러그인이 존재하지 않아 PAPI 기능이 비활성화 됩니다.");
     }
 
     @Override

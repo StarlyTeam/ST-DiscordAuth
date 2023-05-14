@@ -1,5 +1,6 @@
 package net.starly.discordauth.repo;
 
+import net.starly.discordauth.DiscordAuthMain;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -33,7 +34,7 @@ public class PlayerAuthRepository {
                 try {
                     playerId = UUID.fromString(key);
                 } catch (IllegalArgumentException ignored) {
-                    System.out.println("인증 데이터를 불러올 수 없습니다 : " + key);
+                    DiscordAuthMain.getInstance().getLogger().severe("인증 데이터를 불러올 수 없습니다 : " + key);
                     return;
                 }
 
