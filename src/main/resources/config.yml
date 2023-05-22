@@ -26,6 +26,7 @@ auth:
   # 인증시 닉네임 변경
   # {discordTag} : 디스코드 계정의 Tag
   # {playerName} : 마인크래프트 계정의 이름
+  # {playerDisplayName} : 마인크래프트 계정의 이름
   # {playerId} : 마인크래프트 계정의 UUID
   changeNickname: "[ {playerName} ]"
 
