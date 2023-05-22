@@ -72,7 +72,7 @@ public class ModalListener extends ListenerAdapter {
                         settingContext.get(SettingType.CONFIG, "auth.changeNickname")
                                 .replace("{discordTag}", discordUser.getAsTag())
                                 .replace("{playerName}", player.getDisplayName())
-                                .replace("{playerId}", String.valueOf(player.getUniqueId())));
+                                .replace("{playerId}", String.valueOf(player.getUniqueId()))).queue();
             } catch (HierarchyException ignored) {
                 DiscordAuthMain.getInstance().getLogger().warning("서버 주인 또는 봇보다 높은 권한을 가진 멤버의 역할은 수정 할 수 없습니다.");
             }
