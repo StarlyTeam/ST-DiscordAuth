@@ -61,8 +61,7 @@ public class ModalListener extends ListenerAdapter {
                                     .replace("{discordId}", discordUser.getId())
                                     .replace("{discordTag}", discordUser.getAsTag())
                                     .replace("{playerId}", String.valueOf(player.getUniqueId()))
-                                    .replace("{playerName}", player.getName())
-                                    .replace("{playerDisplayName}", player.getDisplayName()))
+                                    .replace("{playerName}", player.getDisplayName()))
                     .send(player);
 
 
